@@ -95,7 +95,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-o
     <div class="sub">Select all that apply.</div>
     <div id="fields" data-multi="fields_worked"></div><div class="err"></div></div>
 
-  <div class="f"><span class="legend">Your current or most recent job is in which field?<span class="req">*</span></span>
+  <div class="f" id="f_fieldpref" hidden><span class="legend">Which of these is your current or most recent one?<span class="req">*</span></span>
     <div id="fieldpref" data-radio="field_current"></div><div class="err"></div></div>
 
   <div class="f"><span class="legend">What is your current or most recent role?<span class="req">*</span></span>
@@ -434,7 +434,18 @@ function gridRows(id,parts,keys){
 
 /* ── static widgets ── */
 multi($("#fields"),"fields_worked",FIELDS,false);
-radios($("#fieldpref"),"field_current",FIELDS);
+// "current field" is asked only when more than one field is ticked, and only among those ticked
+function syncFieldNow(){
+  var picked=vals("fields_worked"), prev=one("field_current"), box=document.getElementById("f_fieldpref");
+  var list=FIELDS.filter(function(f){ return picked.indexOf(f[0])>-1; });
+  radios($("#fieldpref"),"field_current",list);
+  var keep=picked.indexOf(prev)>-1?prev:(list.length===1?list[0][0]:"");
+  if(keep){ var i=document.querySelector('input[name="field_current"][value="'+keep+'"]'); if(i){ i.checked=true; i.closest(".radio").classList.add("on"); } }
+  box.hidden=list.length<2;
+  computeFlow(); applyField();
+}
+$("#fields").addEventListener("pick",function(){ syncFieldNow(); saveDraft(); });
+syncFieldNow();
 radios($("#rolenow"),"current_role",ROLES_NOW);
 multi($("#position"),"positions_wanted",POSITIONS,false);
 radios($("#live"),"live",LIVE); radios($("#visa"),"visa",VISA); radios($("#licence"),"licence",LICENCE); radios($("#notice"),"notice",NOTICE);
