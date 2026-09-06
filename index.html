@@ -576,7 +576,7 @@ next.addEventListener("click",function(){
     next.textContent="Sending…";
     var p=collect(); p.cv_path=path; p.cv_filename=cvf.name; p.cv_size=cvf.size;
     return fetch(SB_URL+"/rest/v1/"+FORM,{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
-      body:JSON.stringify({id:id,position:p.current_role,field_pref:p.field_current,fields_worked:p.fields_worked,positions_wanted:p.positions_wanted,current_role:p.current_role,full_name:p.full_name,mobile:p.mobile,email:p.email,payload:p})});
+      body:JSON.stringify({id:id,position:p.current_role,field_pref:p.field_current,fields_worked:p.fields_worked,positions_wanted:p.positions_wanted,role_now:p.current_role,full_name:p.full_name,mobile:p.mobile,email:p.email,payload:p})});
   }).then(function(r){
     if(!r.ok) return r.text().then(function(t){ throw new Error("HTTP "+r.status+" "+t.slice(0,180)); });
     try{ localStorage.removeItem("tqc_draft"); }catch(e){}
